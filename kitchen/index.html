@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ta' Rita — Kitchen Display</title>
+
+<link rel="stylesheet" href="kitchen.css">
+<link rel="stylesheet" href="../css/responsive.css">
+
+</head>
+<body>
+
+<header>
+  <span class="title">Kitchen — Ta' Rita</span>
+  <div class="header-right">
+    <span class="clock" id="clock"></span>
+    <button class="icon-btn" id="fullscreenBtn" title="Full screen"></button>
+  </div>
+</header>
+
+<div class="board">
+  <div class="column">
+    <div class="col-header"><span>New</span><span class="count" id="count-new">0</span></div>
+    <div id="col-new"></div>
+  </div>
+  <div class="column">
+    <div class="col-header"><span>Preparing</span><span class="count" id="count-preparing">0</span></div>
+    <div id="col-preparing"></div>
+  </div>
+  <div class="column">
+    <div class="col-header"><span>Ready — awaiting waiter</span><span class="count" id="count-ready">0</span></div>
+    <div id="col-ready"></div>
+  </div>
+</div>
+
+<script src="../js/kitchen.js" type="module"></script>
+<script src="../js/menu-data.js" type="module"></script>
+<script src="../js/store.js" type="module"></script>
+
+</body>
+</html>
