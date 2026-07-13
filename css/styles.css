@@ -1,0 +1,49 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
+:root {
+  --paper: #e9e5db;
+  --paper-raised: #f4f1ea;
+  --ink: #20231f;
+  --muted: #6f6a60;
+  --line: #c8c1b5;
+  --accent: #355444;
+  --accent-strong: #294234;
+  --accent-ink: #f7f4ed;
+  --warm: #8e3f2f;
+  --dark-bg: #181a18;
+  --dark-panel: #232622;
+  --dark-line: #3b4039;
+  --dark-text: #efede7;
+  --dark-muted: #9a9d95;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --shadow-soft: 0 12px 30px rgba(22, 24, 21, 0.08);
+}
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body,
+button,
+input,
+textarea,
+select {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+button,
+input,
+textarea,
+select { font: inherit; }
+
+button { -webkit-tap-highlight-color: transparent; }
+
+.mono,
+.serif { font-family: inherit; }

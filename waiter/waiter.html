@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ta' Rita — Waiter</title>
+
+<link rel="stylesheet" href="waiter.css">
+<link rel="stylesheet" href="responsive.css">
+
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="title-row">
+      <span class="title">Floor — Ta' Rita</span>
+      <span class="req-counter zero" id="reqCounter">0</span>
+    </div>
+    <div class="subtitle">Table requests &amp; ready orders</div>
+  </div>
+</header>
+
+<div class="list">
+  <div id="alerts-list"></div>
+
+  <div class="section-label">Ready to serve</div>
+  <div id="ready-list"></div>
+
+  <div class="section-label">Request history</div>
+  <div id="history-list"></div>
+
+  <div class="section-label">Recently served</div>
+  <div id="served-list"></div>
+</div>
+
+<script src="waiter.js" type="module"></script>
+
+</body>
+</html>
