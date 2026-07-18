@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Piazzolla:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Work+Sans:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap");
 
 :root {
   --paper: #eae6dc;
@@ -29,7 +29,7 @@ html {
 }
 body {
   margin: 0;
-  font-family: "Inter", sans-serif;
+  font-family: "Work Sans", sans-serif;
   color: var(--ink);
   display: flex;
   justify-content: center;
@@ -78,7 +78,7 @@ header {
   align-items: flex-start;
 }
 .venue-name {
-  font-family: "Inter", sans-serif;
+  font-family: "Piazzolla", serif;
   font-size: 26px;
   font-weight: 600;
   letter-spacing: -0.01em;
@@ -89,7 +89,7 @@ header {
   align-items: center;
   gap: 8px;
   margin-top: 6px;
-  font-family: "Inter", sans-serif;
+  font-family: "Space Mono", monospace;
   font-size: 12px;
   color: var(--muted);
   letter-spacing: 0.02em;
@@ -118,7 +118,7 @@ header {
   border: none;
   background: var(--paper);
   color: var(--muted);
-  font-family: "Inter", sans-serif;
+  font-family: "Space Mono", monospace;
   font-size: 11px;
   font-weight: 700;
   padding: 0 9px;
@@ -155,7 +155,7 @@ header {
   border: 1.5px solid var(--ink);
   background: var(--paper);
   color: var(--ink);
-  font-family: "Inter", sans-serif;
+  font-family: "Work Sans", sans-serif;
   font-size: 12px;
   font-weight: 600;
   border-radius: 3px;
@@ -205,7 +205,7 @@ header {
   border-bottom: 2px solid transparent;
   cursor: pointer;
   white-space: nowrap;
-  font-family: "Inter", sans-serif;
+  font-family: "Work Sans", sans-serif;
 }
 .tab.active {
   color: var(--ink);
@@ -217,7 +217,7 @@ header {
   flex-wrap: wrap;
   gap: 6px 16px;
   padding: 12px 20px;
-  font-family: "Inter", sans-serif;
+  font-family: "Space Mono", monospace;
   font-size: 11px;
   color: var(--muted);
   border-bottom: 1px solid var(--line);
@@ -247,7 +247,7 @@ header {
   }
 }
 .reorder-title {
-  font-family: "Inter", sans-serif;
+  font-family: "Space Mono", monospace;
   font-size: 11px;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -267,7 +267,7 @@ header {
   color: var(--paper-raised);
   border: none;
   border-radius: 3px;
-  font-family: "Inter", sans-serif;
+  font-family: "Work Sans", sans-serif;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -278,7 +278,7 @@ header {
   flex: 1;
 }
 .section-label {
-  font-family: "Inter", sans-serif;
+  font-family: "Space Mono", monospace;
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -304,7 +304,7 @@ header {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: "Inter", sans-serif;
+  font-family: "Piazzolla", serif;
   font-size: 20px;
   font-style: italic;
   color: var(--muted);
@@ -332,7 +332,7 @@ header {
   flex-wrap: wrap;
 }
 .item-name {
-  font-family: "Inter", sans-serif;
+  font-family: "Piazzolla", serif;
   font-size: 17px;
   font-weight: 500;
   margin: 0;
@@ -354,7 +354,7 @@ header {
   gap: 14px;
 }
 .item-price {
-  font-family: "Inter", sans-serif;
+  font-family: "Space Mono", monospace;
   font-size: 13px;
   color: var(--ink);
 }
@@ -362,7 +362,7 @@ header {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-family: "Inter", sans-serif;
+  font-family: "Space Mono", monospace;
   font-size: 11px;
   color: var(--muted);
 }
@@ -385,7 +385,7 @@ header {
   align-items: center;
   justify-content: center;
   border-radius: 3px;
-  font-family: "Inter", sans-serif;
+  font-family: "Work Sans", sans-serif;
   transition: transform 0.15s ease;
 }
 .add-btn:active {
@@ -415,7 +415,7 @@ header {
 .stepper .qty {
   width: 26px;
   text-align: center;
-  font-family: "Inter", sans-serif;
+  font-family: "Space Mono", monospace;
   font-size: 13px;
   font-weight: 700;
   display: inline-block;
@@ -439,7 +439,7 @@ header {
   position: absolute;
   top: -6px;
   right: 0;
-  font-family: "Inter", sans-serif;
+  font-family: "Space Mono", monospace;
   font-size: 12px;
   font-weight: 700;
   color: var(--accent);
@@ -476,14 +476,14 @@ header {
   gap: 2px;
 }
 .order-bar-count {
-  font-family: "Inter", sans-serif;
+  font-family: "Space Mono", monospace;
   font-size: 11px;
   letter-spacing: 0.05em;
   opacity: 0.75;
   text-transform: uppercase;
 }
 .order-bar-total {
-  font-family: "Inter", sans-serif;
+  font-family: "Piazzolla", serif;
   font-size: 20px;
   font-weight: 600;
   display: inline-block;
@@ -557,7 +557,7 @@ header {
   border-bottom: 1px dashed var(--line);
 }
 .drawer-title {
-  font-family: "Inter", sans-serif;
+  font-family: "Piazzolla", serif;
   font-size: 18px;
   font-weight: 600;
 }
@@ -579,7 +579,7 @@ header {
   display: flex;
   justify-content: space-between;
   gap: 12px;
-  font-family: "Inter", sans-serif;
+  font-family: "Space Mono", monospace;
   font-size: 13px;
   margin-bottom: 10px;
   align-items: baseline;
@@ -603,7 +603,7 @@ header {
 .ticket-total-row {
   display: flex;
   justify-content: space-between;
-  font-family: "Inter", sans-serif;
+  font-family: "Space Mono", monospace;
   font-size: 15px;
   font-weight: 700;
 }
@@ -614,7 +614,7 @@ header {
   border: 1px solid var(--line);
   border-radius: 3px;
   background: var(--paper);
-  font-family: "Inter", sans-serif;
+  font-family: "Work Sans", sans-serif;
   font-size: 13px;
   color: var(--ink);
   resize: none;
@@ -637,7 +637,7 @@ header {
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
-  font-family: "Inter", sans-serif;
+  font-family: "Work Sans", sans-serif;
 }
 .send-btn:disabled {
   opacity: 0.5;
@@ -681,7 +681,7 @@ header {
   transform: translateY(0);
 }
 .confirm-stamp {
-  font-family: "Inter", sans-serif;
+  font-family: "Space Mono", monospace;
   font-size: 11px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -692,7 +692,7 @@ header {
   margin-bottom: 22px;
 }
 .confirm-title {
-  font-family: "Inter", sans-serif;
+  font-family: "Piazzolla", serif;
   font-size: 26px;
   font-weight: 600;
   margin: 0 0 10px;
@@ -708,7 +708,7 @@ header {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-family: "Inter", sans-serif;
+  font-family: "Space Mono", monospace;
   font-size: 12px;
   color: var(--ink);
   background: var(--paper-raised);
@@ -718,7 +718,7 @@ header {
   margin-bottom: 22px;
 }
 .confirm-order-no {
-  font-family: "Inter", sans-serif;
+  font-family: "Space Mono", monospace;
   font-size: 13px;
   color: var(--muted);
   margin-bottom: 30px;
@@ -799,7 +799,7 @@ header {
   }
 }
 .status-step .label {
-  font-family: "Inter", sans-serif;
+  font-family: "Space Mono", monospace;
   font-size: 10px;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -824,7 +824,7 @@ header {
   font-size: 12px;
   color: var(--muted);
   cursor: pointer;
-  font-family: "Inter", sans-serif;
+  font-family: "Work Sans", sans-serif;
 }
 
 .invalid-screen {
@@ -848,12 +848,3 @@ header {
   max-width: 280px;
   line-height: 1.6;
 }
-
-
-/* Typography and surface refinement */
-body { font-feature-settings: "kern" 1; }
-.venue-name, .item-name, .drawer-title, .confirm-title, .order-bar-total { letter-spacing: -0.025em; }
-.table-tag, .legend, .section-label, .reorder-title, .order-bar-count, .confirm-stamp, .status-step .label { font-weight: 700; }
-.item-price, .item-prep, .ticket-row, .ticket-total-row, .confirm-order-no { font-variant-numeric: tabular-nums; }
-.device, .reorder-banner, .item-thumb, .ticket-drawer, .confirm-prep { border-radius: 8px; }
-.quick-btn, .reorder-btn, .add-btn, .theme-btn, .send-btn { border-radius: 5px; }

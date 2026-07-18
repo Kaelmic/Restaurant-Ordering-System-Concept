@@ -1,5 +1,4 @@
-  // ── Icon set (hand-drawn line icons, replaces emoji) ────────
-  const ICON_PATHS = {
+const ICON_PATHS = {
     bell: '<path d="M12 3a5 5 0 0 0-5 5v3.5c0 .9-.4 1.7-1 2.3L5 15h14l-1-1.2c-.6-.6-1-1.4-1-2.3V8a5 5 0 0 0-5-5z"/><path d="M9.5 18a2.5 2.5 0 0 0 5 0"/>',
     receipt: '<path d="M6 3h12v18l-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3-2 1.3V3z"/><path d="M8.5 8h7M8.5 11.5h7M8.5 15h4.5"/>',
     leaf: '<path d="M5 19c0-8 6-14 14-14 0 8-6 14-14 14z"/><path d="M5 19c3-3 6-6 9-11"/>',
@@ -95,27 +94,27 @@
   const CATEGORIES = ["Starters", "Mains", "Sides", "Desserts", "Drinks"];
   const TAG_ICON = { veg: 'leaf', spicy: 'chili', nuts: 'nut', dairy: 'milk' };
   const MENU_ITEMS = [
-    { id: 1, cat: "Starters", name: "Ħobż biż-Żejt", price: 6.50, prep: 6, tags: ['veg'],
+    { id: 1, cat: "Starters", name: "Ħobż biż-Żejt", price: 6.50, prep: 6, station: 'kitchen', tags: ['veg'],
       desc: { en: "Crusty local bread, tomato, capers, olive oil, tuna on request", mt: "Ħobż tal-Malti, tadam, kappar, żejt taż-żebbuġa, tonn fuq talba" } },
-    { id: 2, cat: "Starters", name: "Bigilla", price: 5.00, prep: 5, tags: ['veg', 'spicy'],
+    { id: 2, cat: "Starters", name: "Bigilla", price: 5.00, prep: 5, station: 'kitchen', tags: ['veg', 'spicy'],
       desc: { en: "Broad bean pâté, garlic, chilli, served with galletti", mt: "Pasta tal-ful, tewm, ġildu, servuta mal-galletti" } },
-    { id: 3, cat: "Starters", name: "Pastizzi (3pc)", price: 4.50, prep: 8, tags: ['veg', 'dairy'],
+    { id: 3, cat: "Starters", name: "Pastizzi (3pc)", price: 4.50, prep: 8, station: 'kitchen', tags: ['veg', 'dairy'],
       desc: { en: "Ricotta or mushy pea, straight from the oven", mt: "Rikotta jew piżelli, dritt mill-forn" } },
-    { id: 4, cat: "Mains", name: "Bragioli", price: 15.50, prep: 25, tags: [],
+    { id: 4, cat: "Mains", name: "Bragioli", price: 15.50, prep: 25, station: 'kitchen', tags: [],
       desc: { en: "Beef olives, slow braised in red wine, served with rice", mt: "Biċċiet ċanga mimlija, imsajra bl-inbid aħmar, servuti mar-ross" } },
-    { id: 5, cat: "Mains", name: "Fenkata", price: 17.00, prep: 30, tags: [],
+    { id: 5, cat: "Mains", name: "Fenkata", price: 17.00, prep: 30, station: 'kitchen', tags: [],
       desc: { en: "Rabbit stewed in wine and garlic, the Sunday classic", mt: "Fenek imsajjar bl-inbid u tewm, il-klassiku tal-Ħadd" } },
-    { id: 6, cat: "Mains", name: "Lampuki Pie", price: 14.00, prep: 20, tags: ['dairy'],
+    { id: 6, cat: "Mains", name: "Lampuki Pie", price: 14.00, prep: 20, station: 'kitchen', tags: ['dairy'],
       desc: { en: "Seasonal when available — ask your waiter for today's catch", mt: "Staġjonali meta disponibbli — staqsi lill-kellner" } },
-    { id: 7, cat: "Sides", name: "Maltese Ftira Toast", price: 3.50, prep: 5, tags: ['veg'],
+    { id: 7, cat: "Sides", name: "Maltese Ftira Toast", price: 3.50, prep: 5, station: 'kitchen', tags: ['veg'],
       desc: { en: "Grilled, olive oil, oregano", mt: "Mixwija, żejt taż-żebbuġa, oregano" } },
-    { id: 8, cat: "Sides", name: "Roast Potatoes", price: 3.00, prep: 10, tags: ['veg'],
+    { id: 8, cat: "Sides", name: "Roast Potatoes", price: 3.00, prep: 10, station: 'kitchen', tags: ['veg'],
       desc: { en: "Rosemary, sea salt", mt: "Rożmarin, melħ tal-baħar" } },
-    { id: 11, cat: "Desserts", name: "Kannoli", price: 5.50, prep: 4, tags: ['veg', 'dairy', 'nuts'],
+    { id: 11, cat: "Desserts", name: "Kannoli", price: 5.50, prep: 4, station: 'kitchen', tags: ['veg', 'dairy', 'nuts'],
       desc: { en: "Sicilian-style pastry, ricotta, candied fruit, crushed pistachio", mt: "Għaġina Sqallija, rikotta, frotta kandita, pistaċċi mfarrak" } },
-    { id: 9, cat: "Drinks", name: "Kinnie", price: 2.50, prep: 1, tags: ['veg'],
+    { id: 9, cat: "Drinks", name: "Kinnie", price: 2.50, prep: 1, station: 'bar', tags: ['veg'],
       desc: { en: "Ice cold, the local one", mt: "Iffriżat, tal-lokal" } },
-    { id: 10, cat: "Drinks", name: "House Red — glass", price: 4.50, prep: 1, tags: ['veg'],
+    { id: 10, cat: "Drinks", name: "House Red — glass", price: 4.50, prep: 1, station: 'bar', tags: ['veg'],
       desc: { en: "Gozitan blend", mt: "Taħlita Għawdxija" } },
   ];
   // Set an `img` URL on any item above to show a real photo instead of the monogram placeholder.
@@ -145,11 +144,28 @@
     create({ tableNumber, cartItems, notes }) {
       const orders = _readAll();
       const total = cartItems.reduce((s, i) => s + i.price * i.qty, 0);
-      const order = { id: crypto.randomUUID(), orderNumber: _nextOrderNumber(), tableNumber, items: cartItems, notes: notes || '', total, status: 'new', createdAt: Date.now(), updatedAt: Date.now() };
+      const hasKitchen = cartItems.some(i => i.station === 'kitchen');
+      const hasBar = cartItems.some(i => i.station === 'bar');
+      const order = {
+        id: crypto.randomUUID(), orderNumber: _nextOrderNumber(), tableNumber, items: cartItems, notes: notes || '', total,
+        kitchenStatus: hasKitchen ? 'new' : null,
+        barStatus: hasBar ? 'new' : null,
+        createdAt: Date.now(), updatedAt: Date.now()
+      };
       orders.push(order); _writeAll(orders); return order;
     },
     subscribe(cb) { window.addEventListener('storage', e => { if (e.key === STORE_KEY) cb(); }); window.addEventListener('orders-updated', cb); setInterval(cb, 2000); }
   };
+  // Overall status, as far as the customer is concerned: only "ready" once
+  // every station this order touched (kitchen and/or bar) is ready.
+  function overallStatus(order) {
+    const statuses = [order.kitchenStatus, order.barStatus].filter(Boolean);
+    if (!statuses.length) return 'new';
+    if (statuses.every(s => s === 'served')) return 'served';
+    if (statuses.every(s => s === 'ready' || s === 'served')) return 'ready';
+    if (statuses.some(s => s === 'preparing' || s === 'ready' || s === 'served')) return 'preparing';
+    return 'new';
+  }
   const REQ_KEY = 'tarita_requests_v1';
   function _readReq() { try { const raw = localStorage.getItem(REQ_KEY); return raw ? JSON.parse(raw) : []; } catch (e) { return []; } }
   function _writeReq(list) { localStorage.setItem(REQ_KEY, JSON.stringify(list)); window.dispatchEvent(new CustomEvent('requests-updated')); }
@@ -309,7 +325,7 @@
     if (cartCount() === 0) { openDrawer(); return; }
     const cartItems = Object.entries(cart).map(([id, qty]) => {
       const item = MENU_ITEMS.find(i => i.id == id);
-      return { menuItemId: item.id, name: item.name, price: item.price, qty, tags: item.tags, prep: item.prep };
+      return { menuItemId: item.id, name: item.name, price: item.price, qty, tags: item.tags, prep: item.prep, station: item.station };
     });
     const notes = document.getElementById('notesField').value;
     const order = OrderStore.create({ tableNumber, cartItems, notes });
@@ -334,7 +350,7 @@
     const maxPrep = Math.max(...order.items.map(i => i.prep || 5));
     document.getElementById('confirmPrep').innerHTML = `${icon('clock', 13)} ${t('estReady')(maxPrep + 3)}`;
     document.querySelectorAll('.status-step .label').forEach(el => { el.textContent = t(el.dataset.key); });
-    renderStatusTrack(order.status);
+    renderStatusTrack(overallStatus(order));
   }
 
   function renderStatusTrack(status) {
@@ -348,7 +364,7 @@
     document.getElementById('statusFill').style.width = `${(idx / (order.length - 1)) * 100}%`;
   }
 
-  OrderStore.subscribe(() => { if (!currentOrderId) return; const order = OrderStore.getById(currentOrderId); if (order) renderStatusTrack(order.status); });
+  OrderStore.subscribe(() => { if (!currentOrderId) return; const order = OrderStore.getById(currentOrderId); if (order) renderStatusTrack(overallStatus(order)); });
 
   document.getElementById('backToMenu').addEventListener('click', () => {
     document.getElementById('confirm').classList.remove('visible');

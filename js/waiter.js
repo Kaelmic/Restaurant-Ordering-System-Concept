@@ -1,5 +1,4 @@
-  // ── Icons ────────────────────────────────────────────────────
-  const ICON_PATHS = {
+const ICON_PATHS = {
     bell: '<path d="M12 3a5 5 0 0 0-5 5v3.5c0 .9-.4 1.7-1 2.3L5 15h14l-1-1.2c-.6-.6-1-1.4-1-2.3V8a5 5 0 0 0-5-5z"/><path d="M9.5 18a2.5 2.5 0 0 0 5 0"/>',
     receipt: '<path d="M6 3h12v18l-2-1.3-2 1.3-2-1.3-2 1.3-2-1.3-2 1.3V3z"/><path d="M8.5 8h7M8.5 11.5h7M8.5 15h4.5"/>',
   };
@@ -25,15 +24,42 @@
   function playAlertSound() { playTone([500, 700, 940], [0.08, 0.08, 0.16], 'triangle', 0.15); }
 
   // ── Order store ──────────────────────────────────────────────
+  // Orders are split by station: kitchenStatus and barStatus advance
+  // independently, so a table's drinks can be marked served well before
+  // its food is ready — matching how a real floor actually runs.
   const STORE_KEY = 'tarita_orders_v1';
   function _readAll() { try { const raw = localStorage.getItem(STORE_KEY); return raw ? JSON.parse(raw) : []; } catch (e) { return []; } }
   function _writeAll(orders) { localStorage.setItem(STORE_KEY, JSON.stringify(orders)); window.dispatchEvent(new CustomEvent('orders-updated')); }
   const OrderStore = {
     getAll() { return _readAll().sort((a, b) => a.createdAt - b.createdAt); }, // oldest first, always
-    getByStatus(statuses) { return this.getAll().filter(o => statuses.includes(o.status)); },
-    updateStatus(orderId, status) { const orders = _readAll(); const order = orders.find(o => o.id === orderId); if (!order) return null; order.status = status; order.updatedAt = Date.now(); _writeAll(orders); return order; },
+    // One entry per station that's currently ready — an order with both
+    // food and drinks ready produces two separate serving entries.
+    getReadyGroups() {
+      const groups = [];
+      this.getAll().forEach(o => {
+        if (o.kitchenStatus === 'ready') groups.push({ order: o, station: 'kitchen' });
+        if (o.barStatus === 'ready') groups.push({ order: o, station: 'bar' });
+      });
+      return groups;
+    },
+    getRecentlyServed() {
+      const entries = [];
+      this.getAll().forEach(o => {
+        if (o.kitchenStatus === 'served') entries.push({ order: o, station: 'kitchen', at: o.kitchenServedAt || o.updatedAt });
+        if (o.barStatus === 'served') entries.push({ order: o, station: 'bar', at: o.barServedAt || o.updatedAt });
+      });
+      return entries.sort((a, b) => b.at - a.at).slice(0, 6);
+    },
+    markServed(orderId, station) {
+      const orders = _readAll(); const order = orders.find(o => o.id === orderId); if (!order) return null;
+      order[station + 'Status'] = 'served';
+      order[station + 'ServedAt'] = Date.now();
+      order.updatedAt = Date.now();
+      _writeAll(orders); return order;
+    },
     subscribe(cb) { window.addEventListener('storage', e => { if (e.key === STORE_KEY) cb(); }); window.addEventListener('orders-updated', cb); setInterval(cb, 2000); }
   };
+  const STATION_LABEL = { kitchen: 'Food', bar: 'Drinks' };
 
   // ── Request store ────────────────────────────────────────────
   const REQ_KEY = 'tarita_requests_v1';
@@ -129,26 +155,29 @@
   }
 
   function renderOrders() {
-    const ready = OrderStore.getByStatus(['ready']); // already oldest-first from getAll()
-    const served = OrderStore.getByStatus(['served']).slice(-6).reverse();
+    const readyGroups = OrderStore.getReadyGroups(); // already oldest-first
+    const served = OrderStore.getRecentlyServed();
 
-    document.getElementById('ready-list').innerHTML = ready.length
-      ? ready.map(o => `
+    document.getElementById('ready-list').innerHTML = readyGroups.length
+      ? readyGroups.map(({ order, station }) => {
+          const items = order.items.filter(i => i.station === station);
+          return `
         <div class="card">
           <div class="card-left">
-            <span class="badge">Ready</span>
-            <div class="card-order">Order #${o.orderNumber} — Table ${o.tableNumber}</div>
-            <div class="card-items">${o.items.map(i => `${i.qty}× ${i.name}`).join(', ')}</div>
+            <span class="badge">${STATION_LABEL[station]} ready</span>
+            <div class="card-order">Order #${order.orderNumber} — Table ${order.tableNumber}</div>
+            <div class="card-items">${items.map(i => `${i.qty}× ${i.name}`).join(', ')}</div>
           </div>
-          <button class="serve-btn" data-serve="${o.id}">Mark served</button>
-        </div>`).join('')
+          <button class="serve-btn" data-serve="${order.id}" data-station="${station}">Mark served</button>
+        </div>`;
+        }).join('')
       : `<div class="empty">Nothing waiting to be served right now.</div>`;
 
     document.getElementById('served-list').innerHTML = served.length
-      ? served.map(o => `<div class="served-row"><span>#${o.orderNumber} — Table ${o.tableNumber}</span><span>${new Date(o.updatedAt).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span></div>`).join('')
+      ? served.map(({ order, station, at }) => `<div class="served-row"><span>#${order.orderNumber} — Table ${order.tableNumber} · ${STATION_LABEL[station]}</span><span>${new Date(at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}</span></div>`).join('')
       : `<div class="served-row" style="border-bottom:none;">Nothing served yet</div>`;
 
-    document.querySelectorAll('[data-serve]').forEach(btn => btn.addEventListener('click', () => OrderStore.updateStatus(btn.dataset.serve, 'served')));
+    document.querySelectorAll('[data-serve]').forEach(btn => btn.addEventListener('click', () => OrderStore.markServed(btn.dataset.serve, btn.dataset.station)));
   }
 
   OrderStore.subscribe(renderOrders);

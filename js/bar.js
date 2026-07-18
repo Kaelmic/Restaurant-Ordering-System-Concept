@@ -5,7 +5,7 @@ const ICON_PATHS = {
     chili: '<path d="M6 8c0-2 2-4 4-4 1 0 1.5.6 1 1.5C10 7 8 9 8 12c0 3 2 5 4 6-3 1-7-1-7.5-4.5C4.2 11 5 9.5 6 8z"/><path d="M10 4c1-1 3-1 4 0"/>',
     nut: '<path d="M12 3l7 4v10l-7 4-7-4V7z"/><path d="M12 9v6M9 12h6"/>',
     milk: '<path d="M9 3h6l1 3-1 2v10a2 2 0 0 1-2 2h-2a2 2 0 0 1-2-2V8L8 6z"/>',
-    glass: '<path d="M7 4h10l-1.5 12a2 2 0 0 1-2 1.8h-3a2 2 0 0 1-2-1.8L7 4z"/><path d="M9 9h6"/>',
+    plate: '<path d="M7 3v6a2 2 0 0 0 2 2v10M7 3v4M9 3v4"/><path d="M16 3c-1.2 2.2-1.2 5.8 0 8l-1 1v9"/>',
   };
   function icon(name, size) { size = size || 15; return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICON_PATHS[name]}</svg>`; }
   const TAG_ICON = { veg: 'leaf', spicy: 'chili', nuts: 'nut', dairy: 'milk' };
@@ -28,24 +28,18 @@ const ICON_PATHS = {
       });
     } catch (e) {}
   }
-  function playNewOrderSound() { playTone([720, 720], [0.09, 0.13], 'sine', 0.14); }
+  function playNewOrderSound() { playTone([880, 660], [0.08, 0.12], 'sine', 0.13); }
 
   // ── Order store ──────────────────────────────────────────────
-  // Orders are now split by station: an order can carry both kitchen items
-  // and bar items. Each station tracks its own status independently via
-  // order.kitchenStatus / order.barStatus, so a food-and-drinks order can
-  // have its drinks marked ready long before the food is.
   const STORE_KEY = 'tarita_orders_v1';
   function _readAll() { try { const raw = localStorage.getItem(STORE_KEY); return raw ? JSON.parse(raw) : []; } catch (e) { return []; } }
   function _writeAll(orders) { localStorage.setItem(STORE_KEY, JSON.stringify(orders)); window.dispatchEvent(new CustomEvent('orders-updated')); }
   const OrderStore = {
     getAll() { return _readAll().sort((a, b) => a.createdAt - b.createdAt); }, // oldest first, always
-    // Orders relevant to THIS station only (ignores orders that are bar-only, etc.)
-    getByKitchenStatus(statuses) { return this.getAll().filter(o => o.kitchenStatus && statuses.includes(o.kitchenStatus)); },
-    updateKitchenStatus(orderId, status) {
+    updateBarStatus(orderId, status) {
       const orders = _readAll(); const order = orders.find(o => o.id === orderId); if (!order) return null;
-      order.kitchenStatus = status; order.updatedAt = Date.now();
-      if (status === 'served') order.kitchenServedAt = Date.now();
+      order.barStatus = status; order.updatedAt = Date.now();
+      if (status === 'served') order.barServedAt = Date.now();
       _writeAll(orders); return order;
     },
     subscribe(cb) { window.addEventListener('storage', e => { if (e.key === STORE_KEY) cb(); }); window.addEventListener('orders-updated', cb); setInterval(cb, 2000); }
@@ -62,10 +56,11 @@ const ICON_PATHS = {
   }
 
   function renderTicket(order, actions, isNew) {
-    const kitchenItems = order.items.filter(i => i.station === 'kitchen');
     const barItems = order.items.filter(i => i.station === 'bar');
+    const kitchenItems = order.items.filter(i => i.station === 'kitchen');
     const mins = Math.floor((Date.now() - order.createdAt) / 60000);
-    const urgent = mins >= 10 && order.kitchenStatus !== 'ready';
+    // Drinks should turn around fast — flag urgency sooner than the kitchen does.
+    const urgent = mins >= 5 && order.barStatus !== 'ready';
     return `
       <div class="ticket ${urgent ? 'urgent' : ''} ${isNew ? 'flash' : ''}">
         <div class="ticket-top">
@@ -76,22 +71,22 @@ const ICON_PATHS = {
           <span class="ticket-time">${timeAgo(order.createdAt)}</span>
           <span class="ticket-timer" data-created="${order.createdAt}">${formatElapsed(order.createdAt)}</span>
         </div>
-        ${kitchenItems.map(i => `<div class="ticket-item"><span class="qty">${i.qty}×</span><span>${i.name}${tagIcons(i.tags)}</span></div>`).join('')}
-        ${barItems.length ? `<div class="bar-note">${icon('glass', 13)} ${barItems.map(i => `${i.qty}× ${i.name}`).join(', ')} — on the bar, not this station</div>` : ''}
+        ${barItems.map(i => `<div class="ticket-item"><span class="qty">${i.qty}×</span><span>${i.name}${tagIcons(i.tags)}</span></div>`).join('')}
+        ${kitchenItems.length ? `<div class="kitchen-note">${icon('plate', 13)} ${kitchenItems.map(i => `${i.qty}× ${i.name}`).join(', ')} — on the kitchen, not this station</div>` : ''}
         ${order.notes ? `<div class="ticket-notes">${order.notes}</div>` : ''}
         <div class="ticket-actions">${actions(order)}</div>
       </div>`;
   }
 
   function render() {
-    const relevant = OrderStore.getAll().filter(o => o.kitchenStatus);
+    const relevant = OrderStore.getAll().filter(o => o.barStatus);
     const currentIds = new Set(relevant.map(o => o.id));
-    const arrived = relevant.filter(o => !knownIds.has(o.id) && o.kitchenStatus === 'new');
+    const arrived = relevant.filter(o => !knownIds.has(o.id) && o.barStatus === 'new');
     if (arrived.length && !firstRender) playNewOrderSound();
 
-    const newOrders = relevant.filter(o => o.kitchenStatus === 'new');
-    const preparing = relevant.filter(o => o.kitchenStatus === 'preparing');
-    const ready = relevant.filter(o => o.kitchenStatus === 'ready');
+    const newOrders = relevant.filter(o => o.barStatus === 'new');
+    const preparing = relevant.filter(o => o.barStatus === 'preparing');
+    const ready = relevant.filter(o => o.barStatus === 'ready');
 
     document.getElementById('count-new').textContent = newOrders.length;
     document.getElementById('count-preparing').textContent = preparing.length;
@@ -106,15 +101,15 @@ const ICON_PATHS = {
 
     document.getElementById('col-preparing').innerHTML = preparing.length
       ? preparing.map(o => renderTicket(o, order => `<button class="ticket-btn primary" data-ready="${order.id}">Mark ready</button>`)).join('')
-      : `<div class="empty-state">Nothing on the pass</div>`;
+      : `<div class="empty-state">Nothing being poured</div>`;
 
     document.getElementById('col-ready').innerHTML = ready.length
       ? ready.map(o => renderTicket(o, () => `<span class="ticket-btn" style="opacity:0.6;cursor:default;">Waiting for pickup</span>`)).join('')
       : `<div class="empty-state">All caught up</div>`;
 
-    document.querySelectorAll('[data-start]').forEach(btn => btn.addEventListener('click', () => OrderStore.updateKitchenStatus(btn.dataset.start, 'preparing')));
-    document.querySelectorAll('[data-ready]').forEach(btn => btn.addEventListener('click', () => OrderStore.updateKitchenStatus(btn.dataset.ready, 'ready')));
-    document.querySelectorAll('[data-quickready]').forEach(btn => btn.addEventListener('click', () => OrderStore.updateKitchenStatus(btn.dataset.quickready, 'ready')));
+    document.querySelectorAll('[data-start]').forEach(btn => btn.addEventListener('click', () => OrderStore.updateBarStatus(btn.dataset.start, 'preparing')));
+    document.querySelectorAll('[data-ready]').forEach(btn => btn.addEventListener('click', () => OrderStore.updateBarStatus(btn.dataset.ready, 'ready')));
+    document.querySelectorAll('[data-quickready]').forEach(btn => btn.addEventListener('click', () => OrderStore.updateBarStatus(btn.dataset.quickready, 'ready')));
 
     knownIds = currentIds;
     firstRender = false;

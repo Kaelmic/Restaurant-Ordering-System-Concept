@@ -110,6 +110,46 @@ external library dependency.
 - Swipe left or right on an alert card to acknowledge it (the "Acknowledge" button still works too, for desktop/mouse use)
 - Ready orders already sorted oldest-first, same underlying store logic as kitchen
 
+## Kitchen vs. bar routing (this version)
+
+Real restaurants prep drinks at the bar, not the kitchen — so orders now
+split by **station**:
+
+- Every menu item in `MENU_ITEMS` (in `customer.html`) carries a `station`
+  field: `'kitchen'` or `'bar'`. Currently only the two drinks (Kinnie,
+  House Red) are `'bar'`; everything else is `'kitchen'`.
+- Each order tracks **two independent statuses** — `kitchenStatus` and
+  `barStatus` — instead of one. A food-only order has `barStatus: null`;
+  a food-and-drinks order has both, and they advance on their own
+  timelines. This means a table's drinks can be marked ready and served
+  well before the food is, which is how it actually works on a real
+  floor.
+- **`bar.html`** is a new screen, structurally a twin of `kitchen.html`
+  but filtered to bar-station items and driven by `barStatus`. It has
+  its own accent color (amber, vs. the kitchen's green) so the two are
+  easy to tell apart at a glance, and its "urgent" threshold is 5 minutes
+  instead of the kitchen's 10 — drinks should turn around much faster
+  than a braise.
+- If an order has items for a station a screen isn't responsible for
+  (e.g. a dessert order that includes a glass of wine, viewed on
+  `kitchen.html`), that screen shows a small note — *"1× House Red — on
+  the bar, not this station"* — so kitchen staff aren't left wondering
+  where a menu line went, without cluttering their own queue with it.
+- **`waiter.html`**'s "Ready to serve" list now shows one card per
+  *station* that's ready, not one card per order — so "Table 6 — Drinks
+  ready" and "Table 6 — Food ready" can appear (and get served)
+  completely independently, at different times.
+- The customer's own status tracker (on `customer.html`) still shows one
+  combined progress bar per order — a guest doesn't need to see the
+  kitchen/bar split, just "is my order ready yet," which only shows
+  "Ready" once every station involved has finished.
+- `index.html` now links to four screens instead of three, and the
+  workflow diagram/steps mention food and drinks routing in parallel.
+
+If a real menu grows more stations later (e.g. a dedicated pizza oven,
+or a dessert station), the same pattern extends — just add more values
+to `station` and a `xStatus` field alongside `kitchenStatus`/`barStatus`.
+
 ## Generating real QR codes
 
 Point each table's QR at a URL like:
